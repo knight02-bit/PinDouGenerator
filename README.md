@@ -2,9 +2,9 @@
 
 一款在线生成拼豆（Perler Beads / Hama Beads）像素图纸的工具，支持 2D/3D 视图预览、颜色替换和图纸导出。
 
-![image-20260325185548608](https://cdn.jsdelivr.net/gh/knight02-bit/BlogPicture/typoraPic/20260325185550898.png)
+![image-20260325185548608](README.assets/20260325185550898.png)
 
-![QQ20260325-185643-HD](https://cdn.jsdelivr.net/gh/knight02-bit/BlogPicture/typoraPic/20260325185714834.gif)
+![QQ20260325-185643-HD](README.assets/20260325185714834.gif)
 
 ## 功能特性
 
