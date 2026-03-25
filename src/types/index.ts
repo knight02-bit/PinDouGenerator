@@ -1,0 +1,32 @@
+export interface BeadColor {
+  id: string;
+  name: string;
+  hex: string;
+  rgb: [number, number, number];
+  brand: 'hama' | 'perler';
+}
+
+export interface Pixel {
+  x: number;
+  y: number;
+  colorId: string;
+}
+
+export interface BeadGrid {
+  width: number;
+  height: number;
+  pixels: string[][]; // colorId grid
+}
+
+export interface ViewSettings {
+  viewMode: '2d' | '3d';
+  beadStyle: 'cylinder' | 'sphere';
+  showGrid: boolean;
+  hoveredPixel: { x: number; y: number } | null;
+}
+
+export interface ExportSettings {
+  format: 'png' | 'pdf';
+  scale: number;
+  includePalette: boolean;
+}
