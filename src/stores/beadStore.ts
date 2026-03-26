@@ -120,9 +120,29 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
 
   generateGridFromPalette: (imageData) => {
     const { palette, gridWidth, gridHeight } = get();
-    const pixels = quantizeImage(imageData, palette, gridWidth, gridHeight);
+    const { width: imgW, height: imgH } = imageData;
+
+    // Calculate grid size maintaining image aspect ratio
+    // The larger dimension will be capped to the current grid setting
+    const aspectRatio = imgW / imgH;
+    let targetWidth = gridWidth;
+    let targetHeight = gridHeight;
+
+    if (aspectRatio > 1) {
+      // Image is wider, cap width and scale height
+      targetHeight = Math.round(gridWidth / aspectRatio);
+    } else {
+      // Image is taller, cap height and scale width
+      targetWidth = Math.round(gridHeight * aspectRatio);
+    }
+
+    // Ensure minimum size of 1
+    targetWidth = Math.max(1, targetWidth);
+    targetHeight = Math.max(1, targetHeight);
+
+    const pixels = quantizeImage(imageData, palette, targetWidth, targetHeight);
     set({
-      grid: { width: gridWidth, height: gridHeight, pixels },
+      grid: { width: targetWidth, height: targetHeight, pixels },
       originalImageData: imageData,
     });
   },
