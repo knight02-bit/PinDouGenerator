@@ -23,6 +23,17 @@ interface BeadStore {
   // Original image data for regeneration
   originalImageData: ImageData | null;
 
+  // Original image dimensions (for preset generation)
+  originalImageWidth: number;
+  originalImageHeight: number;
+
+  // Image aspect ratio for preset suggestions
+  imageAspectRatio: number | null;
+  suggestedPresets: { width: number; height: number }[];
+
+  // Lock aspect ratio when manually changing custom size
+  lockAspectRatio: boolean;
+
   // View settings
   viewSettings: ViewSettings;
   setViewMode: (mode: '2d' | '3d') => void;
@@ -47,6 +58,11 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
   gridWidth: 29,
   gridHeight: 29,
   originalImageData: null,
+  originalImageWidth: 0,
+  originalImageHeight: 0,
+  imageAspectRatio: null,
+  suggestedPresets: [],
+  lockAspectRatio: true,
   viewSettings: {
     viewMode: '2d',
     beadStyle: 'cylinder',
@@ -140,10 +156,60 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
     targetWidth = Math.max(1, targetWidth);
     targetHeight = Math.max(1, targetHeight);
 
+    // Generate suggested presets based on original image dimensions
+    // This uses the IMAGE dimensions, not current grid settings
+    const suggestedPresets = generateSuggestedPresets(imgW, imgH);
+
     const pixels = quantizeImage(imageData, palette, targetWidth, targetHeight);
     set({
       grid: { width: targetWidth, height: targetHeight, pixels },
       originalImageData: imageData,
+      originalImageWidth: imgW,
+      originalImageHeight: imgH,
+      imageAspectRatio: aspectRatio,
+      suggestedPresets,
     });
   },
 }));
+
+function generateSuggestedPresets(imgWidth: number, imgHeight: number): { width: number; height: number }[] {
+  const aspectRatio = imgWidth / imgHeight;
+  const presets = new Map<string, { width: number; height: number }>();
+
+  // Standard sizes to generate presets at
+  // These maintain the image aspect ratio at different scales
+  const standardMaxSizes = [10, 15, 20, 25, 29, 35, 40, 50, 60, 80, 100];
+
+  for (const maxSize of standardMaxSizes) {
+    let width: number;
+    let height: number;
+
+    if (aspectRatio >= 1) {
+      // Landscape or square - width is the larger dimension
+      width = Math.min(maxSize, 100);
+      height = Math.round(width / aspectRatio);
+    } else {
+      // Portrait - height is the larger dimension
+      height = Math.min(maxSize, 100);
+      width = Math.round(height * aspectRatio);
+    }
+
+    // Ensure minimum size
+    width = Math.max(1, width);
+    height = Math.max(1, height);
+
+    // Only add if both dimensions are within reasonable range
+    if (width >= 5 && height >= 5 && width <= 100 && height <= 100) {
+      const key = `${width}x${height}`;
+      // Avoid duplicate entries
+      if (!presets.has(key)) {
+        presets.set(key, { width, height });
+      }
+    }
+  }
+
+  // Return sorted by total size (smallest first)
+  return Array.from(presets.values())
+    .sort((a, b) => (a.width * a.height) - (b.width * b.height))
+    .slice(0, 6);
+}
