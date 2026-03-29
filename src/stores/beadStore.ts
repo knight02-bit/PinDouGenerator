@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { BeadColor, BeadGrid, ViewSettings, ExportSettings } from '../types';
+import type { BeadColor, BeadGrid, ViewSettings, ExportSettings, ColorReplacement } from '../types';
 import { hamaColors } from '../utils/hamaColors';
 import { perlerColors } from '../utils/perlerColors';
 import { quantizeImage } from '../utils/colorQuantization';
@@ -44,8 +44,10 @@ interface BeadStore {
   exportSettings: ExportSettings;
   setExportSettings: (settings: Partial<ExportSettings>) => void;
 
-  // Color replacement
+  // Color replacement history
+  colorReplacements: ColorReplacement[];
   replaceColor: (fromColorId: string, toColorId: string) => void;
+  undoColorReplacement: () => void;
 
   // Generate grid from palette
   generateGridFromPalette: (imageData: ImageData) => void;
@@ -74,6 +76,7 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
     scale: 2,
     includePalette: true,
   },
+  colorReplacements: [],
 
   setBrand: (brand) => {
     const palette = brand === 'hama' ? hamaColors : perlerColors;
@@ -126,12 +129,28 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
     })),
 
   replaceColor: (fromColorId, toColorId) => {
-    const { grid } = get();
+    const { grid, colorReplacements } = get();
     if (!grid) return;
     const newPixels = grid.pixels.map((row) =>
       row.map((colorId) => (colorId === fromColorId ? toColorId : colorId))
     );
-    set({ grid: { ...grid, pixels: newPixels } });
+    set({
+      grid: { ...grid, pixels: newPixels },
+      colorReplacements: [...colorReplacements, { fromId: fromColorId, toId: toColorId }],
+    });
+  },
+
+  undoColorReplacement: () => {
+    const { grid, colorReplacements } = get();
+    if (!grid || colorReplacements.length === 0) return;
+    const lastReplacement = colorReplacements[colorReplacements.length - 1];
+    const newPixels = grid.pixels.map((row) =>
+      row.map((colorId) => (colorId === lastReplacement.toId ? lastReplacement.fromId : colorId))
+    );
+    set({
+      grid: { ...grid, pixels: newPixels },
+      colorReplacements: colorReplacements.slice(0, -1),
+    });
   },
 
   generateGridFromPalette: (imageData) => {
@@ -168,6 +187,7 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
       originalImageHeight: imgH,
       imageAspectRatio: aspectRatio,
       suggestedPresets,
+      colorReplacements: [],
     });
   },
 }));

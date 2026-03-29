@@ -6,25 +6,25 @@ export function ViewModeSelector() {
   const setBeadStyle = useBeadStore((s) => s.setBeadStyle);
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-      <h3 className="text-sm font-medium text-gray-300 mb-3">视图模式</h3>
+    <div className="bg-[var(--color-bg-secondary)] rounded-lg p-4 border border-[var(--color-border)]">
+      <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-3">视图模式</h3>
       <div className="flex gap-2 mb-3">
         <button
           onClick={() => setViewMode('2d')}
-          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-[var(--color-border)] ${
             viewSettings.viewMode === '2d'
-              ? 'bg-cyan-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)]'
+              : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:border-[var(--color-text-muted)]'
           }`}
         >
           2D
         </button>
         <button
           onClick={() => setViewMode('3d')}
-          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-[var(--color-border)] ${
             viewSettings.viewMode === '3d'
-              ? 'bg-cyan-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)]'
+              : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:border-[var(--color-text-muted)]'
           }`}
         >
           3D
@@ -35,20 +35,20 @@ export function ViewModeSelector() {
         <div className="flex gap-2">
           <button
             onClick={() => setBeadStyle('cylinder')}
-            className={`flex-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+            className={`flex-1 px-3 py-1.5 rounded text-xs font-medium transition-colors border border-[var(--color-border)] ${
               viewSettings.beadStyle === 'cylinder'
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                ? 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)]'
+                : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)] hover:border-[var(--color-text-muted)]'
             }`}
           >
             空心圆柱
           </button>
           <button
             onClick={() => setBeadStyle('sphere')}
-            className={`flex-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+            className={`flex-1 px-3 py-1.5 rounded text-xs font-medium transition-colors border border-[var(--color-border)] ${
               viewSettings.beadStyle === 'sphere'
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                ? 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)]'
+                : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)] hover:border-[var(--color-text-muted)]'
             }`}
           >
             球形

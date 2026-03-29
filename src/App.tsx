@@ -4,7 +4,6 @@ import { ImageUploader } from './components/Controls/ImageUploader';
 import { SizeSelector } from './components/Controls/SizeSelector';
 import { BrandSelector } from './components/Controls/BrandSelector';
 import { ViewModeSelector } from './components/Controls/ViewModeSelector';
-import { ColorReplacer } from './components/Controls/ColorReplacer';
 import { ExportPanel } from './components/Controls/ExportPanel';
 import { PixelGrid } from './components/Canvas2D/PixelGrid';
 import { BeadScene } from './components/Canvas3D/BeadScene';
@@ -22,7 +21,6 @@ function App() {
           <BrandSelector />
           <SizeSelector />
           <ViewModeSelector />
-          <ColorReplacer />
           <ExportPanel />
         </div>
 

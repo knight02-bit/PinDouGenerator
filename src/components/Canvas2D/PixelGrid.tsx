@@ -24,11 +24,11 @@ export function PixelGrid() {
     // Create color map
     const colorMap = new Map(palette.map((c) => [c.id, c.hex]));
 
-    // Draw checkerboard background for transparency effect
+    // Draw checkerboard background for transparency effect (dark theme)
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const isLight = (x + y) % 2 === 0;
-        ctx.fillStyle = isLight ? '#2a2a2a' : '#1a1a1a';
+        ctx.fillStyle = isLight ? '#1a1a1a' : '#262626';
         ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
@@ -54,7 +54,7 @@ export function PixelGrid() {
     // Draw hover highlight
     if (viewSettings.hoveredPixel) {
       const { x, y } = viewSettings.hoveredPixel;
-      ctx.strokeStyle = '#00ffff';
+      ctx.strokeStyle = '#f5f5f5';
       ctx.lineWidth = 2;
       ctx.strokeRect(
         x * CELL_SIZE + 1,
@@ -91,15 +91,15 @@ export function PixelGrid() {
 
   if (!grid) {
     return (
-      <div className="flex items-center justify-center h-96 bg-gray-800 rounded-lg border border-gray-700">
-        <p className="text-gray-500">请上传图片生成图纸</p>
+      <div className="flex items-center justify-center h-96 bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border)]">
+        <p className="text-[var(--color-text-muted)]">请上传图片生成图纸</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 overflow-auto">
-      <div className="mb-2 text-sm text-gray-400">
+    <div className="bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border)] p-4 overflow-auto">
+      <div className="mb-2 text-sm text-[var(--color-text-secondary)]">
         {grid.width} x {grid.height} 像素 | 悬浮查看详情
       </div>
       <canvas
@@ -129,20 +129,20 @@ function HoverInfo({
   const color = palette.find((c) => c.id === colorId);
 
   return (
-    <div className="mt-2 text-xs text-gray-400 flex items-center gap-2">
+    <div className="mt-2 text-xs text-[var(--color-text-secondary)] flex items-center gap-2">
       <span>
         位置: ({pixel.x}, {pixel.y})
       </span>
       {color && (
         <>
           <div
-            className="w-4 h-4 rounded border border-gray-600"
+            className="w-4 h-4 rounded border border-[var(--color-border)]"
             style={{ backgroundColor: color.hex }}
           />
           <span>
             {color.name} ({color.hex})
           </span>
-          <span className="text-gray-600">[{color.brand.toUpperCase()}]</span>
+          <span className="text-[var(--color-text-muted)]">[{color.brand.toUpperCase()}]</span>
         </>
       )}
     </div>

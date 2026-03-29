@@ -20,8 +20,8 @@ export function ImageUploader() {
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-      <h3 className="text-sm font-medium text-gray-300 mb-3">导入图片</h3>
+    <div className="bg-[var(--color-bg-secondary)] rounded-lg p-4 border border-[var(--color-border)]">
+      <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-3">导入图片</h3>
       <input
         ref={inputRef}
         type="file"
@@ -31,11 +31,11 @@ export function ImageUploader() {
       />
       <button
         onClick={() => inputRef.current?.click()}
-        className="w-full px-4 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-sm font-medium transition-colors"
+        className="w-full px-4 py-2 bg-[var(--color-text-primary)] hover:bg-[var(--color-text-secondary)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium transition-colors"
       >
         选择图片文件
       </button>
-      <p className="text-xs text-gray-500 mt-2">
+      <p className="text-xs text-[var(--color-text-muted)] mt-2">
         支持 JPG、PNG 等常见格式
       </p>
     </div>

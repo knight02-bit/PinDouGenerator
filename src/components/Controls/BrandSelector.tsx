@@ -5,25 +5,25 @@ export function BrandSelector() {
   const setBrand = useBeadStore((s) => s.setBrand);
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-      <h3 className="text-sm font-medium text-gray-300 mb-3">选择色卡</h3>
+    <div className="bg-[var(--color-bg-secondary)] rounded-lg p-4 border border-[var(--color-border)]">
+      <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-3">选择色卡</h3>
       <div className="flex gap-2">
         <button
           onClick={() => setBrand('hama')}
-          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-[var(--color-border)] ${
             currentBrand === 'hama'
-              ? 'bg-cyan-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)]'
+              : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:border-[var(--color-text-muted)]'
           }`}
         >
           Hama
         </button>
         <button
           onClick={() => setBrand('perler')}
-          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-[var(--color-border)] ${
             currentBrand === 'perler'
-              ? 'bg-cyan-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)]'
+              : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:border-[var(--color-text-muted)]'
           }`}
         >
           Perler

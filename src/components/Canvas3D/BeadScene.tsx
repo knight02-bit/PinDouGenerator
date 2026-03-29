@@ -11,8 +11,8 @@ export function BeadScene() {
 
   if (!grid) {
     return (
-      <div className="flex items-center justify-center h-96 bg-gray-800 rounded-lg border border-gray-700">
-        <p className="text-gray-500">请上传图片生成图纸</p>
+      <div className="flex items-center justify-center h-96 bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border)]">
+        <p className="text-[var(--color-text-muted)]">请上传图片生成图纸</p>
       </div>
     );
   }
@@ -22,8 +22,8 @@ export function BeadScene() {
   const centerY = grid.height / 2;
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-      <div className="p-2 border-b border-gray-700 text-sm text-gray-400">
+    <div className="bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border)] overflow-hidden">
+      <div className="p-2 border-b border-[var(--color-border)] text-sm text-[var(--color-text-secondary)]">
         3D视图 - 拖拽旋转 | 滚轮缩放
       </div>
       <div className="h-[500px]">

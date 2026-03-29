@@ -56,30 +56,30 @@ export function ExportPanel() {
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-      <h3 className="text-sm font-medium text-gray-300 mb-3">导出图纸</h3>
+    <div className="bg-[var(--color-bg-secondary)] rounded-lg p-4 border border-[var(--color-border)]">
+      <h3 className="text-sm font-medium text-[var(--color-text-primary)] mb-3">导出图纸</h3>
 
       <div className="flex gap-2 mb-3">
         <button
           onClick={handleExportPNG}
-          className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-medium transition-colors"
+          className="flex-1 px-3 py-2 border border-[var(--color-border)] hover:border-[var(--color-text-muted)] rounded-lg text-sm font-medium transition-colors bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)]"
         >
           PNG
         </button>
         <button
           onClick={handleExportPDF}
-          className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-500 rounded-lg text-sm font-medium transition-colors"
+          className="flex-1 px-3 py-2 border border-[var(--color-border)] hover:border-[var(--color-text-muted)] rounded-lg text-sm font-medium transition-colors bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)]"
         >
           PDF
         </button>
       </div>
 
       <div className="flex items-center gap-2">
-        <label className="text-xs text-gray-400">导出精度:</label>
+        <label className="text-xs text-[var(--color-text-muted)]">导出精度:</label>
         <select
           value={exportSettings.scale}
           onChange={(e) => setExportSettings({ scale: Number(e.target.value) })}
-          className="bg-gray-700 text-xs rounded px-2 py-1"
+          className="bg-[var(--color-bg-tertiary)] text-xs rounded px-2 py-1 border border-[var(--color-border)] text-[var(--color-text-secondary)]"
         >
           <option value={1}>1x</option>
           <option value={2}>2x</option>

@@ -30,3 +30,8 @@ export interface ExportSettings {
   scale: number;
   includePalette: boolean;
 }
+
+export interface ColorReplacement {
+  fromId: string;
+  toId: string;
+}
