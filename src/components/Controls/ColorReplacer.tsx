@@ -45,7 +45,6 @@ export function ColorReplacer() {
       <div className="space-y-2 max-h-48 overflow-y-auto">
         {usedColors.map((color) => {
           const selectedId = selectedReplacements[color.id];
-          const selectedColor = selectedId ? palette.find((p) => p.id === selectedId) : null;
 
           return (
             <div key={color.id} className="flex items-center gap-2">
