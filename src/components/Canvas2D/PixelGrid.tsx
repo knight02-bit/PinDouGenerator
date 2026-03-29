@@ -66,12 +66,17 @@ export function PixelGrid() {
   }, [grid, palette, viewSettings.hoveredPixel]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!grid) return;
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
+    if (!grid || !canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const canvasWidth = canvasRef.current.width;
+    const canvasHeight = canvasRef.current.height;
 
-    const x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
-    const y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
+    // Calculate actual scale (accounts for CSS max-w-full scaling)
+    const scaleX = canvasWidth / rect.width;
+    const scaleY = canvasHeight / rect.height;
+
+    const x = Math.floor(((e.clientX - rect.left) * scaleX) / CELL_SIZE);
+    const y = Math.floor(((e.clientY - rect.top) * scaleY) / CELL_SIZE);
 
     if (x >= 0 && x < grid.width && y >= 0 && y < grid.height) {
       setHoveredPixel({ x, y });
