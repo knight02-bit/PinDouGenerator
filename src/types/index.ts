@@ -1,4 +1,5 @@
 export type BeadBrand = 'hama' | 'perler' | 'mard';
+export type MardPaletteMode = 'basic' | 'full';
 
 export interface BeadColor {
   id: string;

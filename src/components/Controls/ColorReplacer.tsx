@@ -52,7 +52,9 @@ export function ColorReplacer() {
                 className="w-6 h-6 rounded border border-gray-600"
                 style={{ backgroundColor: color.hex }}
               />
-              <span className="text-xs text-gray-300 flex-1 truncate">{color.name}</span>
+              <span className="text-xs text-gray-300 flex-1 truncate">
+                {color.id === color.name ? color.name : `${color.id} · ${color.name}`}
+              </span>
               <select
                 className="bg-gray-700 text-xs rounded px-1 py-0.5"
                 value={selectedId || ''}
@@ -69,7 +71,7 @@ export function ColorReplacer() {
                   .filter((p) => p.id !== color.id)
                   .map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.name}
+                      {p.id === p.name ? p.name : `${p.id} · ${p.name}`}
                     </option>
                   ))}
               </select>

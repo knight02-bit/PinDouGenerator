@@ -140,7 +140,7 @@ function HoverInfo({
             style={{ backgroundColor: color.hex }}
           />
           <span>
-            {color.name} ({color.hex})
+            {color.id === color.name ? color.name : `${color.id} · ${color.name}`} ({color.hex})
           </span>
           <span className="text-[var(--color-text-muted)]">[{color.brand.toUpperCase()}]</span>
         </>

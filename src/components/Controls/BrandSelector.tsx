@@ -2,7 +2,9 @@ import { useBeadStore } from '../../stores/beadStore';
 
 export function BrandSelector() {
   const currentBrand = useBeadStore((s) => s.currentBrand);
+  const mardPaletteMode = useBeadStore((s) => s.mardPaletteMode);
   const setBrand = useBeadStore((s) => s.setBrand);
+  const setMardPaletteMode = useBeadStore((s) => s.setMardPaletteMode);
   const brands = [
     { id: 'hama', label: 'Hama' },
     { id: 'perler', label: 'Perler' },
@@ -27,6 +29,33 @@ export function BrandSelector() {
           </button>
         ))}
       </div>
+      {currentBrand === 'mard' && (
+        <div className="mt-3 border-t border-[var(--color-border)] pt-3">
+          <div className="mb-2 text-xs text-[var(--color-text-muted)]">Mard 色卡版本</div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setMardPaletteMode('basic')}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-[var(--color-border)] ${
+                mardPaletteMode === 'basic'
+                  ? 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)]'
+                  : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:border-[var(--color-text-muted)]'
+              }`}
+            >
+              基础版 221 色
+            </button>
+            <button
+              onClick={() => setMardPaletteMode('full')}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border border-[var(--color-border)] ${
+                mardPaletteMode === 'full'
+                  ? 'bg-[var(--color-text-primary)] text-[var(--color-bg-primary)]'
+                  : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:border-[var(--color-text-muted)]'
+              }`}
+            >
+              完整版 291 色
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

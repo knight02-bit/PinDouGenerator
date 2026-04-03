@@ -1,67 +1,80 @@
 import { create } from 'zustand';
-import type { BeadBrand, BeadColor, BeadGrid, ViewSettings, ExportSettings, ColorReplacement } from '../types';
+import type {
+  BeadBrand,
+  BeadColor,
+  BeadGrid,
+  ViewSettings,
+  ExportSettings,
+  ColorReplacement,
+  MardPaletteMode,
+} from '../types';
 import { hamaColors } from '../utils/hamaColors';
-import { mardColors } from '../utils/mardColors';
+import { mardBasicColors, mardFullColors } from '../utils/mardColors';
 import { perlerColors } from '../utils/perlerColors';
 import { quantizeImage } from '../utils/colorQuantization';
 
 const brandPalettes: Record<BeadBrand, BeadColor[]> = {
   hama: hamaColors,
   perler: perlerColors,
-  mard: mardColors,
+  mard: mardBasicColors,
+};
+
+const mardPalettes: Record<MardPaletteMode, BeadColor[]> = {
+  basic: mardBasicColors,
+  full: mardFullColors,
 };
 
 interface BeadStore {
-  // Brand & Palette
   currentBrand: BeadBrand;
+  mardPaletteMode: MardPaletteMode;
   palette: BeadColor[];
   setBrand: (brand: BeadBrand) => void;
+  setMardPaletteMode: (mode: MardPaletteMode) => void;
 
-  // Grid data
   grid: BeadGrid | null;
   setGrid: (grid: BeadGrid) => void;
   updatePixel: (x: number, y: number, colorId: string) => void;
 
-  // Grid dimensions
   gridWidth: number;
   gridHeight: number;
   setGridSize: (width: number, height: number) => void;
 
-  // Original image data for regeneration
   originalImageData: ImageData | null;
 
-  // Original image dimensions (for preset generation)
   originalImageWidth: number;
   originalImageHeight: number;
 
-  // Image aspect ratio for preset suggestions
   imageAspectRatio: number | null;
   suggestedPresets: { width: number; height: number }[];
 
-  // Lock aspect ratio when manually changing custom size
   lockAspectRatio: boolean;
 
-  // View settings
   viewSettings: ViewSettings;
   setViewMode: (mode: '2d' | '3d') => void;
   setBeadStyle: (style: 'cylinder' | 'sphere') => void;
   setHoveredPixel: (pixel: { x: number; y: number } | null) => void;
 
-  // Export settings
   exportSettings: ExportSettings;
   setExportSettings: (settings: Partial<ExportSettings>) => void;
 
-  // Color replacement history
   colorReplacements: ColorReplacement[];
   replaceColor: (fromColorId: string, toColorId: string) => void;
   undoColorReplacement: () => void;
 
-  // Generate grid from palette
   generateGridFromPalette: (imageData: ImageData) => void;
+}
+
+function getPaletteForBrand(brand: BeadBrand, mardPaletteMode: MardPaletteMode) {
+  if (brand === 'mard') {
+    return mardPalettes[mardPaletteMode];
+  }
+
+  return brandPalettes[brand];
 }
 
 export const useBeadStore = create<BeadStore>((set, get) => ({
   currentBrand: 'hama',
+  mardPaletteMode: 'basic',
   palette: hamaColors,
   grid: null,
   gridWidth: 29,
@@ -86,11 +99,25 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
   colorReplacements: [],
 
   setBrand: (brand) => {
-    const palette = brandPalettes[brand];
+    const { mardPaletteMode } = get();
+    const palette = getPaletteForBrand(brand, mardPaletteMode);
     set({ currentBrand: brand, palette });
-    // Regenerate grid with new palette if we have original image data
     const { originalImageData } = get();
     if (originalImageData) {
+      get().generateGridFromPalette(originalImageData);
+    }
+  },
+
+  setMardPaletteMode: (mode) => {
+    const { currentBrand, originalImageData } = get();
+    const nextState: Pick<BeadStore, 'mardPaletteMode' | 'palette'> = {
+      mardPaletteMode: mode,
+      palette: currentBrand === 'mard' ? mardPalettes[mode] : get().palette,
+    };
+
+    set(nextState);
+
+    if (currentBrand === 'mard' && originalImageData) {
       get().generateGridFromPalette(originalImageData);
     }
   },
@@ -109,7 +136,6 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
   setGridSize: (width, height) => {
     const { originalImageData } = get();
     set({ gridWidth: width, gridHeight: height });
-    // Regenerate grid with new size if we have original image data
     if (originalImageData) {
       get().generateGridFromPalette(originalImageData);
     }
@@ -164,26 +190,19 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
     const { palette, gridWidth, gridHeight } = get();
     const { width: imgW, height: imgH } = imageData;
 
-    // Calculate grid size maintaining image aspect ratio
-    // The larger dimension will be capped to the current grid setting
     const aspectRatio = imgW / imgH;
     let targetWidth = gridWidth;
     let targetHeight = gridHeight;
 
     if (aspectRatio > 1) {
-      // Image is wider, cap width and scale height
       targetHeight = Math.round(gridWidth / aspectRatio);
     } else {
-      // Image is taller, cap height and scale width
       targetWidth = Math.round(gridHeight * aspectRatio);
     }
 
-    // Ensure minimum size of 1
     targetWidth = Math.max(1, targetWidth);
     targetHeight = Math.max(1, targetHeight);
 
-    // Generate suggested presets based on original image dimensions
-    // This uses the IMAGE dimensions, not current grid settings
     const suggestedPresets = generateSuggestedPresets(imgW, imgH);
 
     const pixels = quantizeImage(imageData, palette, targetWidth, targetHeight);
@@ -203,8 +222,6 @@ function generateSuggestedPresets(imgWidth: number, imgHeight: number): { width:
   const aspectRatio = imgWidth / imgHeight;
   const presets = new Map<string, { width: number; height: number }>();
 
-  // Standard sizes to generate presets at
-  // These maintain the image aspect ratio at different scales
   const standardMaxSizes = [35, 40, 50, 80, 120, 150];
 
   for (const maxSize of standardMaxSizes) {
@@ -212,30 +229,24 @@ function generateSuggestedPresets(imgWidth: number, imgHeight: number): { width:
     let height: number;
 
     if (aspectRatio >= 1) {
-      // Landscape or square - width is the larger dimension
       width = Math.min(maxSize, 200);
       height = Math.round(width / aspectRatio);
     } else {
-      // Portrait - height is the larger dimension
       height = Math.min(maxSize, 200);
       width = Math.round(height * aspectRatio);
     }
 
-    // Ensure minimum size
     width = Math.max(1, width);
     height = Math.max(1, height);
 
-    // Only add if both dimensions are within reasonable range
     if (width >= 5 && height >= 5 && width <= 200 && height <= 200) {
       const key = `${width}x${height}`;
-      // Avoid duplicate entries
       if (!presets.has(key)) {
         presets.set(key, { width, height });
       }
     }
   }
 
-  // Return sorted by total size (smallest first)
   return Array.from(presets.values())
     .sort((a, b) => (a.width * a.height) - (b.width * b.height))
     .slice(0, 6);
