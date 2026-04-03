@@ -2,72 +2,137 @@
 
 [在线体验](https://knight02-bit.github.io/PinDouGenerator/)
 
-一款在线生成拼豆（Perler Beads / Hama Beads）像素图纸的工具，支持 2D/3D 视图预览、颜色替换和图纸导出。
+一个面向拼豆创作场景的在线图纸生成工具。上传图片后，应用会按所选拼豆品牌色卡进行颜色量化，并生成适合查看、预览和导出的拼豆图纸。
 
-![image-20260325185548608](README.assets/20260325185550898.png)
+![界面截图](README.assets/20260325185550898.png)
 
-![QQ20260325-185643-HD](README.assets/20260325185714834.gif)
+![操作演示](README.assets/20260325185714834.gif)
 
-## 功能特性
+## 项目简介
 
-- **图片导入** - 上传任意图片，自动转换为拼豆像素图纸
-- **预设色卡** - 支持 Hama（38色）和 Perler（40色）两大品牌色卡
-- **颜色替换** - 一键将图纸中的某个颜色替换为其他颜色
-- **多规格支持** - 预设 10x10、15x15、29x29（Hama标准板）、50x50 等规格，支持自定义尺寸
-- **2D/3D 视图** - 2D 像素网格视图和 3D 空心圆柱/球体视图
-- **3D 交互** - 鼠标拖拽旋转、滚轮缩放、悬浮高亮
-- **导出打印** - 支持导出 PNG 图片和 PDF 文档
+这个项目适合用来做以下事情：
 
-## 技术栈
+- 把普通图片快速转换为拼豆图纸
+- 按品牌色卡查看实际可用颜色
+- 按图片比例自动生成推荐尺寸
+- 在 2D / 3D 视图之间切换查看成品效果
+- 导出 PNG 或 PDF 方便保存、打印或分享
 
-- **框架**: React 18 + TypeScript + Vite
-- **3D 渲染**: Three.js + @react-three/fiber + @react-three/drei
-- **状态管理**: Zustand
-- **样式**: Tailwind CSS
-- **导出**: jsPDF + html2canvas
+## 当前功能
+
+- **图片导入**：支持选择本地图片文件，自动读取并生成图纸
+- **品牌色卡**：支持 `Hama`、`Perler`、`Mard` 三套色卡切换
+- **尺寸控制**：支持固定预设尺寸和滑块调节，当前滑动范围为 `5 ~ 200`
+- **比例适配**：上传图片后会根据原图比例生成推荐尺寸
+- **2D 视图**：查看像素化后的拼豆排布结果
+- **3D 视图**：支持空心圆柱和球形两种拼豆外观
+- **导出图纸**：支持导出 `PNG` 和 `PDF`
+- **深色界面**：默认深色主题，更适合长时间查看图纸
+
+## 使用流程
+
+1. 选择拼豆品牌色卡
+2. 选择推荐尺寸、默认尺寸，或拖动滑块调整尺寸
+3. 上传一张本地图片
+4. 等待系统按当前色卡自动生成图纸
+5. 在 `2D` / `3D` 视图中检查效果
+6. 根据需要选择导出 `PNG` 或 `PDF`
+
+## 运行环境
+
+- `Node.js 20+`，推荐使用较新的 LTS 版本
+- `npm 10+`
 
 ## 快速开始
 
 ```bash
-# 安装依赖
 npm install
+npm run dev
+```
 
-# 启动开发服务器
+开发服务器启动后，按终端提示访问本地地址即可。
+
+## 可用脚本
+
+```bash
+# 启动开发环境
 npm run dev
 
-# 构建生产版本
+# 生产构建
 npm run build
+
+# 代码检查
+npm run lint
+
+# 预览构建产物
+npm run preview
 ```
 
-## 使用说明
+## 技术栈
 
-1. **选择色卡** - 在左侧面板选择 Hama 或 Perler 色卡
-2. **设置规格** - 选择或自定义图纸尺寸
-3. **导入图片** - 点击"选择图片文件"上传图片
-4. **生成图纸** - 系统自动将图片转换为拼豆像素图纸
-5. **颜色替换** - 在"颜色替换"面板选择颜色进行替换
-6. **切换视图** - 在"视图模式"中切换 2D/3D 视图
-7. **导出图纸** - 点击 PNG 或 PDF 按钮导出
+- `React 19`
+- `TypeScript`
+- `Vite`
+- `Zustand`
+- `Three.js`
+- `@react-three/fiber`
+- `@react-three/drei`
+- `Tailwind CSS`
+- `html2canvas`
+- `jsPDF`
 
-## 项目结构
+## 目录结构
 
+```text
+PinDouGenerator/
+├── .github/workflows/     # GitHub Pages 自动部署
+├── public/                # 静态资源
+├── src/
+│   ├── components/
+│   │   ├── Canvas2D/      # 2D 图纸展示
+│   │   ├── Canvas3D/      # 3D 场景与模型展示
+│   │   ├── Controls/      # 上传、尺寸、色卡、导出等控制面板
+│   │   └── Layout/        # 页面布局
+│   ├── stores/            # Zustand 状态管理
+│   ├── types/             # 类型定义
+│   └── utils/             # 图像处理、色卡与颜色量化工具
+├── README.assets/         # README 配图资源
+└── README.md
 ```
-src/
-├── components/
-│   ├── Canvas2D/          # 2D像素图纸视图
-│   ├── Canvas3D/          # 3D视图
-│   ├── Controls/          # 控制面板组件
-│   └── Layout/            # 布局组件
-├── stores/
-│   └── beadStore.ts       # Zustand 状态管理
-├── utils/
-│   ├── colorQuantization.ts # 颜色量化算法
-│   ├── hamaColors.ts       # Hama 色卡
-│   ├── perlerColors.ts     # Perler 色卡
-│   └── imageProcessor.ts   # 图像处理
-└── types/
-    └── index.ts            # TypeScript 类型定义
-```
+
+## 关键模块说明
+
+- `src/stores/beadStore.ts`：全局状态中心，负责尺寸、色卡、原图数据和图纸生成流程
+- `src/components/Controls/ImageUploader.tsx`：处理本地图片导入
+- `src/components/Controls/SizeSelector.tsx`：处理默认尺寸、推荐尺寸和滑块调节
+- `src/components/Controls/BrandSelector.tsx`：切换品牌色卡
+- `src/components/Controls/ViewModeSelector.tsx`：切换 2D / 3D 视图与 3D 拼豆样式
+- `src/components/Controls/ExportPanel.tsx`：导出 PNG / PDF
+- `src/utils/colorQuantization.ts`：将图片颜色映射到当前色卡
+
+## 部署说明
+
+项目已包含 GitHub Pages 自动部署工作流：
+
+- 工作流文件：`.github/workflows/deploy.yml`
+- 触发方式：推送到 `main` 分支后自动执行
+- 流程内容：安装依赖、执行 `npm run build`、发布 `dist/` 到 GitHub Pages
+
+如果你是第一次部署，记得在仓库设置中开启 GitHub Pages，并确认 Pages 来源与工作流配置一致。
+
+## 注意事项
+
+- 推荐尺寸会尽量保持原图比例，但会受当前推荐档位限制
+- 滑块尺寸范围是 `5 ~ 200`，并不代表所有图片在这个范围内都能得到完全相同的视觉效果
+- 导出清晰度可在界面中选择 `1x`、`2x`、`3x`
+- 当前 README 仅描述已经接入主界面的功能，不包含未启用或开发中的实验性组件
+
+## 后续可扩展方向
+
+- 增加颜色替换与撤销的可视化入口
+- 支持导出带色号图例的图纸
+- 增加更多拼豆品牌和自定义色卡导入
+
 
 ## License
 

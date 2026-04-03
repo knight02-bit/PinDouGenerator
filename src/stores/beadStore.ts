@@ -1,14 +1,21 @@
 import { create } from 'zustand';
-import type { BeadColor, BeadGrid, ViewSettings, ExportSettings, ColorReplacement } from '../types';
+import type { BeadBrand, BeadColor, BeadGrid, ViewSettings, ExportSettings, ColorReplacement } from '../types';
 import { hamaColors } from '../utils/hamaColors';
+import { mardColors } from '../utils/mardColors';
 import { perlerColors } from '../utils/perlerColors';
 import { quantizeImage } from '../utils/colorQuantization';
 
+const brandPalettes: Record<BeadBrand, BeadColor[]> = {
+  hama: hamaColors,
+  perler: perlerColors,
+  mard: mardColors,
+};
+
 interface BeadStore {
   // Brand & Palette
-  currentBrand: 'hama' | 'perler';
+  currentBrand: BeadBrand;
   palette: BeadColor[];
-  setBrand: (brand: 'hama' | 'perler') => void;
+  setBrand: (brand: BeadBrand) => void;
 
   // Grid data
   grid: BeadGrid | null;
@@ -79,7 +86,7 @@ export const useBeadStore = create<BeadStore>((set, get) => ({
   colorReplacements: [],
 
   setBrand: (brand) => {
-    const palette = brand === 'hama' ? hamaColors : perlerColors;
+    const palette = brandPalettes[brand];
     set({ currentBrand: brand, palette });
     // Regenerate grid with new palette if we have original image data
     const { originalImageData } = get();
@@ -198,7 +205,7 @@ function generateSuggestedPresets(imgWidth: number, imgHeight: number): { width:
 
   // Standard sizes to generate presets at
   // These maintain the image aspect ratio at different scales
-  const standardMaxSizes = [10, 15, 20, 25, 29, 35, 40, 50, 60, 80, 100];
+  const standardMaxSizes = [35, 40, 50, 80, 120, 150];
 
   for (const maxSize of standardMaxSizes) {
     let width: number;
@@ -206,11 +213,11 @@ function generateSuggestedPresets(imgWidth: number, imgHeight: number): { width:
 
     if (aspectRatio >= 1) {
       // Landscape or square - width is the larger dimension
-      width = Math.min(maxSize, 100);
+      width = Math.min(maxSize, 200);
       height = Math.round(width / aspectRatio);
     } else {
       // Portrait - height is the larger dimension
-      height = Math.min(maxSize, 100);
+      height = Math.min(maxSize, 200);
       width = Math.round(height * aspectRatio);
     }
 
@@ -219,7 +226,7 @@ function generateSuggestedPresets(imgWidth: number, imgHeight: number): { width:
     height = Math.max(1, height);
 
     // Only add if both dimensions are within reasonable range
-    if (width >= 5 && height >= 5 && width <= 100 && height <= 100) {
+    if (width >= 5 && height >= 5 && width <= 200 && height <= 200) {
       const key = `${width}x${height}`;
       // Avoid duplicate entries
       if (!presets.has(key)) {

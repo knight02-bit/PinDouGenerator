@@ -1,9 +1,11 @@
+export type BeadBrand = 'hama' | 'perler' | 'mard';
+
 export interface BeadColor {
   id: string;
   name: string;
   hex: string;
   rgb: [number, number, number];
-  brand: 'hama' | 'perler';
+  brand: BeadBrand;
 }
 
 export interface Pixel {

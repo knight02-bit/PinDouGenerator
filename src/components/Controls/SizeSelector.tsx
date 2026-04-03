@@ -54,7 +54,7 @@ export function SizeSelector() {
         <input
           type="range"
           min="5"
-          max="100"
+          max="200"
           value={gridWidth}
           onChange={(e) => {
             const w = parseInt(e.target.value);
@@ -71,7 +71,7 @@ export function SizeSelector() {
         />
         <div className="flex justify-between text-xs text-[var(--color-text-muted)] mt-1">
           <span>5</span>
-          <span>100</span>
+          <span>200</span>
         </div>
       </div>
     </div>
