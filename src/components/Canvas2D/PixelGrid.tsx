@@ -1,10 +1,11 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useBeadStore } from '../../stores/beadStore';
 
 const CELL_SIZE = 16;
 
 export function PixelGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const grid = useBeadStore((s) => s.grid);
   const palette = useBeadStore((s) => s.palette);
   const viewSettings = useBeadStore((s) => s.viewSettings);
@@ -78,6 +79,8 @@ export function PixelGrid() {
     const x = Math.floor(((e.clientX - rect.left) * scaleX) / CELL_SIZE);
     const y = Math.floor(((e.clientY - rect.top) * scaleY) / CELL_SIZE);
 
+    setMousePos({ x: e.clientX, y: e.clientY });
+
     if (x >= 0 && x < grid.width && y >= 0 && y < grid.height) {
       setHoveredPixel({ x, y });
     } else {
@@ -98,7 +101,7 @@ export function PixelGrid() {
   }
 
   return (
-    <div className="bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border)] p-4 overflow-auto">
+    <div className="bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border)] p-4 overflow-auto relative">
       <div className="mb-2 text-sm text-[var(--color-text-secondary)]">
         {grid.width} x {grid.height} 像素 | 悬浮查看详情
       </div>
@@ -110,40 +113,49 @@ export function PixelGrid() {
         style={{ imageRendering: 'pixelated' }}
       />
       {viewSettings.hoveredPixel && (
-        <HoverInfo grid={grid} palette={palette} pixel={viewSettings.hoveredPixel} />
+        <HoverTooltip
+          grid={grid}
+          palette={palette}
+          pixel={viewSettings.hoveredPixel}
+          mousePos={mousePos}
+        />
       )}
     </div>
   );
 }
 
-function HoverInfo({
+function HoverTooltip({
   grid,
   palette,
   pixel,
+  mousePos,
 }: {
   grid: NonNullable<ReturnType<typeof useBeadStore.getState>['grid']>;
   palette: ReturnType<typeof useBeadStore.getState>['palette'];
   pixel: { x: number; y: number };
+  mousePos: { x: number; y: number };
 }) {
   const colorId = grid.pixels[pixel.y][pixel.x];
   const color = palette.find((c) => c.id === colorId);
 
   return (
-    <div className="mt-2 text-xs text-[var(--color-text-secondary)] flex items-center gap-2">
-      <span>
-        位置: ({pixel.x}, {pixel.y})
-      </span>
+    <div
+      className="fixed pointer-events-none z-50 px-3 py-2 rounded-lg backdrop-blur-md border border-white/20 shadow-lg"
+      style={{
+        left: mousePos.x + 16,
+        top: mousePos.y + 16,
+        backgroundColor: 'rgba(30, 41, 59, 0.85)',
+        minWidth: '80px',
+      }}
+    >
       {color && (
-        <>
+        <div className="flex items-center gap-2">
           <div
-            className="w-4 h-4 rounded border border-[var(--color-border)]"
+            className="w-5 h-5 rounded border border-white/30 shrink-0"
             style={{ backgroundColor: color.hex }}
           />
-          <span>
-            {color.id === color.name ? color.name : `${color.id} · ${color.name}`} ({color.hex})
-          </span>
-          <span className="text-[var(--color-text-muted)]">[{color.brand.toUpperCase()}]</span>
-        </>
+          <span className="text-white font-medium text-sm">{color.id}</span>
+        </div>
       )}
     </div>
   );

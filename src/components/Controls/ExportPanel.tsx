@@ -97,7 +97,7 @@ export function ExportPanel() {
 
 function ExportGridContent({ grid, palette }: { grid: NonNullable<ReturnType<typeof useBeadStore.getState>['grid']>; palette: ReturnType<typeof useBeadStore.getState>['palette'] }) {
   const colorMap = new Map(palette.map((c) => [c.id, c]));
-  const cellSize = 20;
+  const cellSize = 32;
 
   return (
     <div className="p-4" style={{ backgroundColor: '#1f2937' }}>
@@ -113,6 +113,7 @@ function ExportGridContent({ grid, palette }: { grid: NonNullable<ReturnType<typ
         {grid.pixels.map((row, y) =>
           row.map((colorId, x) => {
             const color = colorMap.get(colorId);
+            const label = color?.id || '';
             return (
               <div
                 key={`${x}-${y}`}
@@ -121,12 +122,33 @@ function ExportGridContent({ grid, palette }: { grid: NonNullable<ReturnType<typ
                   height: cellSize,
                   backgroundColor: color?.hex || '#888',
                   border: '1px solid #333',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '8px',
+                  fontWeight: 'bold',
+                  color: isLightColor(color?.hex || '#888') ? '#000' : '#fff',
+                  fontFamily: 'Arial, sans-serif',
+                  textAlign: 'center',
+                  lineHeight: '1',
                 }}
-              />
+                title={label}
+              >
+                {label}
+              </div>
             );
           })
         )}
       </div>
     </div>
   );
+}
+
+function isLightColor(hex: string): boolean {
+  const normalizedHex = hex.replace('#', '');
+  const r = Number.parseInt(normalizedHex.slice(0, 2), 16);
+  const g = Number.parseInt(normalizedHex.slice(2, 4), 16);
+  const b = Number.parseInt(normalizedHex.slice(4, 6), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.5;
 }

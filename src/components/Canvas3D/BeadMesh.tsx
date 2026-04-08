@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import type { ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -20,27 +20,23 @@ export function BeadMesh({
   onPointerLeave,
 }: BeadMeshProps) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const [hovered, setHovered] = useState(false);
 
   const handlePointerEnter = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
-    setHovered(true);
     onPointerEnter();
     document.body.style.cursor = 'pointer';
   };
 
   const handlePointerLeave = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
-    setHovered(false);
     onPointerLeave();
     document.body.style.cursor = 'auto';
   };
 
-  const scale = isHovered || hovered ? 1.2 : 1;
-  const emissiveIntensity = isHovered || hovered ? 0.5 : 0;
+  const scale = isHovered ? 1.2 : 1;
+  const emissiveIntensity = isHovered ? 0.5 : 0;
 
   if (beadStyle === 'cylinder') {
-    // Hollow cylinder (torus-like shape)
     return (
       <mesh
         ref={meshRef}
@@ -61,7 +57,6 @@ export function BeadMesh({
     );
   }
 
-  // Sphere style
   return (
     <mesh
       ref={meshRef}
